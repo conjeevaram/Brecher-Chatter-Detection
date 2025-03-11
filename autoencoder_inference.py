@@ -66,17 +66,36 @@ class ChatterAutoEncoderRefactored(ChatterAutoEncoder):
         self.scored['Anomaly_Score'] = 1.0 / (1.0 + np.exp(-k * (self.scored['Loss_mae'] - threshold)))
         return self.scored['Anomaly_Score']
 
+    # def plot_chatter(self):
+    #     """
+    #     Plots the continuous anomaly score (from 0 to 1) over time.
+    #     """
+    #     plt.figure(figsize=(16, 9))
+    #     plt.plot(self.scored.index, self.scored['Anomaly_Score'], color='purple', label='Anomaly Score')
+    #     plt.xlabel('Time (ms)', fontsize=20)
+    #     plt.ylabel('Anomaly Score (0 to 1)', fontsize=20)
+    #     plt.title('Continuous Chatter Prediction Score', fontsize=22)
+    #     plt.legend(fontsize=20)
+    #     plt.ylim(0, 1)
+    #     plt.show()
+
     def plot_chatter(self):
         """
-        Plots the continuous anomaly score (from 0 to 1) over time.
+        Plots a square wave for chatter detection:
+        - 1 when the reconstruction error exceeds the threshold.
+        - 0 when it does not.
         """
+        # Create a binary series: 1 if Loss_mae > threshold, else 0.
+        square_wave = (self.scored['Loss_mae'] > self.scored['Threshold']).astype(int)
+        
         plt.figure(figsize=(16, 9))
-        plt.plot(self.scored.index, self.scored['Anomaly_Score'], color='purple', label='Anomaly Score')
+        # Use a step plot to create a square wave appearance.
+        plt.step(self.scored.index, square_wave, where='post', color='purple', label='Chatter (Binary)')
         plt.xlabel('Time (ms)', fontsize=20)
-        plt.ylabel('Anomaly Score (0 to 1)', fontsize=20)
-        plt.title('Continuous Chatter Prediction Score', fontsize=22)
+        plt.ylabel('Chatter (0 or 1)', fontsize=20)
+        plt.title('Square Wave Chatter Prediction', fontsize=22)
         plt.legend(fontsize=20)
-        plt.ylim(0, 1)
+        plt.ylim(-0.1, 1.1)
         plt.show()
 
 
