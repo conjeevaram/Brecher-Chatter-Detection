@@ -7,7 +7,7 @@ class ChatterDetector:
     def __init__(self, spindle_speed):
         self.spindle_speed = spindle_speed
         self.revolution_time = 60 / spindle_speed
-        self.chatter_threshold = 0.8  # Empirical threshold for wood
+        self.chatter_threshold = 0.8
         self.f_sample = None
         self.time = None
         self.dispX = None
@@ -25,6 +25,9 @@ class ChatterDetector:
         # Remove time offset
         self.time -= self.time[0]
         self.f_sample = int(len(self.time) / (self.time[-1] - self.time[0]))
+
+        self.rawX = accelX.copy()
+        self.rawY = accelY.copy()
         
         # Process signals
         self.accelX, self.accelY = self._filter_signals(accelX, accelY)
