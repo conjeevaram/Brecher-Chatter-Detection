@@ -81,22 +81,23 @@ class ChatterAutoEncoderRefactored(ChatterAutoEncoder):
 
     def plot_chatter(self):
         """
-        Plots a square wave for chatter detection:
-        - 1 when the reconstruction error exceeds the threshold.
-        - 0 when it does not.
+        Plots a square wave for chatter detection using a direct threshold.
+        If the reconstruction error exceeds the threshold, the output is 1;
+        otherwise, it is 0.
         """
-        # Create a binary series: 1 if Loss_mae > threshold, else 0.
-        square_wave = (self.scored['Loss_mae'] > self.scored['Threshold']).astype(int)
+        # Create a binary signal: 1 when Loss_mae > Threshold, else 0.
+        binary_signal = (self.scored['Loss_mae'] > self.scored['Threshold']).astype(int)
         
         plt.figure(figsize=(16, 9))
-        # Use a step plot to create a square wave appearance.
-        plt.step(self.scored.index, square_wave, where='post', color='purple', label='Chatter (Binary)')
+        # Use a step plot to produce the square wave appearance.
+        plt.step(self.scored.index, binary_signal, where='post', color='purple', label='Chatter (Binary)')
         plt.xlabel('Time (ms)', fontsize=20)
         plt.ylabel('Chatter (0 or 1)', fontsize=20)
-        plt.title('Square Wave Chatter Prediction', fontsize=22)
+        plt.title('Square Wave Chatter Prediction (Threshold Based)', fontsize=22)
         plt.legend(fontsize=20)
         plt.ylim(-0.1, 1.1)
         plt.show()
+
 
 
 if __name__ == "__main__":
