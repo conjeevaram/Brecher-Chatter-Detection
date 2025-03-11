@@ -36,10 +36,12 @@ def main(csv_path, rpm):
     plt.show()
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python brecher_inference.py <csv_path> <rpm>")
-        sys.exit(1)
+    # if len(sys.argv) != 3:
+    #     print("Usage: python brecher_inference.py <csv_path> <rpm>")
+    #     sys.exit(1)
     
-    csv_path = sys.argv[1]
-    rpm = float(sys.argv[2])
+    # csv_path = "C:/roland_anomalydetection/Legacy Code/Roland_BadCuttertests/EBI_Roland_Good_Cutter/EBI_Roland_Good_Cutter/70002.csv"
+    csv_path = "C:/LJM-Data-Collection/csv/8500_2_timecalc.csv"
+    # csv_path = "8500_trunc.csv"
+    rpm = 8500
     main(csv_path, rpm)

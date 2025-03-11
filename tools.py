@@ -70,35 +70,41 @@ class ChatterDetector:
         return indices
 
     def calculate_chatter_indicators(self, window_size=0.3, step_size=0.1):
-        """Calculate CI using sliding window"""
+        """Calculate CI using sliding window with optimized bisection search."""
         window_samples = int(window_size * self.f_sample)
         step_samples = int(step_size * self.f_sample)
-        
+
+        # Precompute bisection indices as numpy array and their corresponding times
+        bisection_array = np.array(self.bisection_indices)
+        bisection_times = self.time[bisection_array]
+
         ci_times = []
         ci_values = []
-        
-        for w_start in range(0, len(self.time)-window_samples, step_samples):
+
+        # Loop over windows
+        for w_start in range(0, len(self.time) - window_samples, step_samples):
             w_end = w_start + window_samples
-            
-            # Get bisection points in window
-            bis_points = [i for i in self.bisection_indices 
-                        if w_start <= i < w_end]
-            
+
+            # Use np.searchsorted to quickly locate bisection indices in the window
+            left = np.searchsorted(bisection_times, self.time[w_start], side='left')
+            right = np.searchsorted(bisection_times, self.time[w_end], side='right')
+            bis_points = bisection_array[left:right]
+
+            # If fewer than two bisection points, set CI = 0
             if len(bis_points) < 2:
                 ci_values.append(0)
-                ci_times.append(self.time[w_start + window_samples//2])
+                ci_times.append(self.time[w_start + window_samples // 2])
                 continue
-                
-            # Calculate standard deviations
+
+            # Get displacement values at bisection points and for the full window
             bis_x = self.dispX[bis_points]
             bis_y = self.dispY[bis_points]
             traj_x = self.dispX[w_start:w_end]
             traj_y = self.dispY[w_start:w_end]
-            
-            ci = (np.std(bis_x) * np.std(bis_y)) / \
-                (np.std(traj_x) * np.std(traj_y) + 1e-9)
-            
+
+            # Calculate chatter indicator (CI)
+            ci = (np.std(bis_x) * np.std(bis_y)) / (np.std(traj_x) * np.std(traj_y) + 1e-9)
             ci_values.append(ci)
-            ci_times.append(self.time[w_start + window_samples//2])
-        
+            ci_times.append(self.time[w_start + window_samples // 2])
+
         return ci_times, ci_values
