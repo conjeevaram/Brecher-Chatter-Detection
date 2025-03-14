@@ -111,7 +111,7 @@ if __name__ == "__main__":
     chatter_detector.load_data(csv_path, smooth_by=7)
 
     # Run prediction using a threshold of 0.15.
-    anomaly_scores = chatter_detector.predict_chatter(threshold=0.15, k=20.0)
+    anomaly_scores = chatter_detector.predict_chatter(threshold=0.30, k=20.0)
 
     # Print a few anomaly scores.
     print("First few anomaly scores:")
